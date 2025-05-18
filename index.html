@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI WordCounter | Every Word Matters. Make Them Count.</title>
+    <meta name="description" content="Free online word counter tool that analyzes your text for words, characters, sentences, paragraphs, reading time and more. Perfect for writers and professionals!">
+    <meta name="keywords" content="word counter, character counter, sentence counter, reading time calculator, writing tool">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --secondary: #2E7D32;
+            --dark: #333;
+            --light: #f5f5f5;
+            --text: #333;
+            --bg: #fff;
+            --card-bg: #f9f9f9;
+            --toggle-bg: #e0e0e0;
+            --toggle-active: #4CAF50;
+        }
+
+        [data-theme="dark"] {
+            --primary: #689F38;
+            --secondary: #7CB342;
+            --dark: #f5f5f5;
+            --light: #333;
+            --text: #f5f5f5;
+            --bg: #121212;
+            --card-bg: #1e1e1e;
+            --toggle-bg: #424242;
+            --toggle-active: #689F38;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .hero p.tagline {
+            font-size: 1.2rem;
+            color: var(--dark);
+            margin-bottom: 30px;
+        }
+
+        /* Tool Section */
+        .tool-container {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .text-input {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            resize: vertical;
+            background-color: var(--bg);
+            color: var(--text);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .toggle-label {
+            margin: 0 10px;
+            font-weight: 500;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--toggle-bg);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--toggle-active);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        /* Results Table */
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .results-table th, .results-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .results-table th {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .results-table tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        /* Testimonials */
+        .testimonials {
+            margin: 40px 0;
+        }
+
+        .testimonials h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary);
+        }
+
+        .testimonial-cards {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .testimonial-card {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            text-align: center;
+        }
+
+        .testimonial-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .testimonial-card p {
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+
+        .testimonial-card .author {
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        /* How to Use */
+        .how-to-use {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            margin: 40px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .how-to-use h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .step {
+            text-align: center;
+            max-width: 200px;
+        }
+
+        .step i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        /* Article */
+        .article {
+            margin: 40px 0;
+        }
+
+        .article h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .article h3 {
+            color: var(--primary);
+            margin: 20px 0 10px;
+        }
+
+        .article p {
+            margin-bottom: 15px;
+        }
+
+        .faq {
+            margin: 20px 0;
+        }
+
+        .faq h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 15px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-section ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 99;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                margin-top: 15px;
+                justify-content: center;
+            }
+
+            .results-table {
+                font-size: 0.8rem;
+            }
+
+            .results-table th, .results-table td {
+                padding: 8px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .results-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-calculator"></i>
+                <span>AI WordCounter</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">🏠 Home</a></li>
+                    <li><a href="wordcounter.html">📊 WordCounter</a></li>
+                    <li><a href="privacy.html">🔒 Privacy</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Google Ad 1 (Top) -->
+    <div class="container" style="margin: 20px auto;">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : '9e444108ce409887f1051df7ffb512e8',
+                'format' : 'iframe',
+                'height' : 90,
+                'width' : 728,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/9e444108ce409887f1051df7ffb512e8/invoke.js"></script>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>AI WordCounter Tool</h1>
+            <p class="tagline">Every Word Matters. Make Them Count.</p>
+        </div>
+    </section>
+
+    <!-- Tool Section -->
+    <section class="tool">
+        <div class="container tool-container">
+            <textarea id="textInput" class="text-input" placeholder="Type or paste your text here..."></textarea>
+            
+            <div class="button-group">
+                <button id="analyzeBtn" class="btn btn-primary">Analyze Text</button>
+                <button id="clearBtn" class="btn btn-secondary">Clear</button>
+            </div>
+
+            <div class="toggle-container">
+                <span class="toggle-label">Basic</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="modeToggle">
+                    <span class="slider"></span>
+                </label>
+                <span class="toggle-label">Advanced</span>
+            </div>
+
+            <div id="resultsContainer">
+                <table id="resultsTable" class="results-table">
+                    <thead>
+                        <tr id="tableHeader">
+                            <th>📝 Words</th>
+                            <th>🔤 Characters</th>
+                            <th>🗣 Sentences</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Results will be inserted here -->
+                    </tbody>
+                </table>
+                <button id="addTotalBtn" class="btn btn-outline" style="margin-top: 15px; display: none;">Add Total</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Google Ad 2 (Middle) -->
+    <div class="container" style="margin: 20px auto;">
+        <script async="async" data-cfasync="false" src="//pl26672167.profitableratecpm.com/235a95d3cdf010c3568ba5f3326b9113/invoke.js"></script>
+        <div id="container-235a95d3cdf010c3568ba5f3326b9113"></div>
+    </div>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <h2>What Our Users Say</h2>
+            <div class="testimonial-cards">
+                <div class="testimonial-card">
+                    <i class="fas fa-quote-left"></i>
+                    <p>"This word counter is incredibly accurate and so easy to use. It's become an essential tool for my writing process."</p>
+                    <p class="author">- Sarah, Content Writer</p>
+                </div>
+                <div class="testimonial-card">
+                    <i class="fas fa-quote-left"></i>
+                    <p>"The advanced features like reading time calculation have been game-changers for my blog posts. Highly recommended!"</p>
+                    <p class="author">- Mark, Editor</p>
+                </div>
+                <div class="testimonial-card">
+                    <i class="fas fa-quote-left"></i>
+                    <p>"So accurate! I've tried many word counters, but this one gives me all the metrics I need in one place."</p>
+                    <p class="author">- James, Student</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How to Use -->
+    <section class="how-to-use">
+        <div class="container">
+            <h2>How to Use Our WordCounter Tool</h2>
+            <div class="steps">
+                <div class="step">
+                    <i class="fas fa-paste"></i>
+                    <h3>Step 1</h3>
+                    <p>Paste your text into the input box</p>
+                </div>
+                <div class="step">
+                    <i class="fas fa-toggle-on"></i>
+                    <h3>Step 2</h3>
+                    <p>Toggle between basic and advanced mode</p>
+                </div>
+                <div class="step">
+                    <i class="fas fa-calculator"></i>
+                    <h3>Step 3</h3>
+                    <p>Click "Analyze" to get your results</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Article -->
+    <section class="article">
+        <div class="container">
+            <h2>What is WordCounter?</h2>
+            <p>In today's digital age, where content is king, having the right tools to analyze and optimize your writing is essential. A word counter is more than just a simple tool that counts words - it's a comprehensive writing assistant that provides valuable insights into your text's structure, readability, and engagement potential.</p>
+            
+            <h3>Why Word Count Matters</h3>
+            <p>Word count plays a crucial role in various writing contexts. For students, meeting assignment requirements is essential. Bloggers need to optimize for SEO and reader engagement. Professional writers often have strict word limits to adhere to. Our AI WordCounter helps you stay within these limits while providing additional metrics to enhance your writing quality.</p>
+            
+            <h3>Beyond Basic Counting</h3>
+            <p>Modern word counters like ours go beyond simple word and character counts. They analyze sentence structure, paragraph distribution, reading level, and even estimate how long it will take your audience to read or speak your content. These insights help you tailor your writing to your specific audience and purpose.</p>
+            
+            <div class="faq">
+                <h3>Frequently Asked Questions</h3>
+                
+                <div class="faq-item">
+                    <h4>Can I count spaces in the character count?</h4>
+                    <p>Yes, our tool counts all characters including spaces. If you need the count without spaces, simply subtract the space count from the total character count.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>How accurate is the reading time calculation?</h4>
+                    <p>Our reading time is calculated based on average adult reading speed of about 200-250 words per minute. This gives a good estimate for most readers.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>What reading level does the tool measure?</h4>
+                    <p>We use the Flesch-Kincaid Grade Level formula, which translates the score to a U.S. grade level, making it easy to understand the education level needed to comprehend your text.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>Can I use this tool for long documents?</h4>
+                    <p>Absolutely! Our tool can handle large amounts of text efficiently. There's no practical limit to the amount of text you can analyze.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>Is my text stored or analyzed for other purposes?</h4>
+                    <p>No, all analysis happens in your browser. We don't store or analyze your text for any other purposes. Your privacy is important to us.</p>
+                </div>
+            </div>
+            
+            <h3>Final Thoughts</h3>
+            <p>Whether you're a student, blogger, professional writer, or just someone who needs to keep track of their writing, our AI WordCounter is the perfect tool for you. With its simple interface and powerful features, you'll have all the metrics you need to perfect your writing.</p>
+        </div>
+    </section>
+
+    <!-- Google Ad 3 (Bottom) -->
+    <div class="container" style="margin: 20px auto;">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : '9e444108ce409887f1051df7ffb512e8',
+                'format' : 'iframe',
+                'height' : 90,
+                'width' : 728,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/9e444108ce409887f1051df7ffb512e8/invoke.js"></script>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-section">
+                <h3>AI WordCounter</h3>
+                <p>Every Word Matters. Make Them Count.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="wordcounter.html">WordCounter Tool</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="disclaimer.html">Disclaimer</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <ul>
+                    <li><i class="fas fa-envelope"></i> contact@aiwordcounter.com</li>
+                    <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 AI WordCounter. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Google Ad 4 (Last) -->
+    <div class="container" style="margin: 20px auto;">
+        <script async="async" data-cfasync="false" src="//pl26672167.profitableratecpm.com/235a95d3cdf010c3568ba5f3326b9113/invoke.js"></script>
+        <div id="container-235a95d3cdf010c3568ba5f3326b9113"></div>
+    </div>
+
+    <!-- Dark Mode Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const textInput = document.getElementById('textInput');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const modeToggle = document.getElementById('modeToggle');
+            const resultsTable = document.getElementById('resultsTable');
+            const tableHeader = document.getElementById('tableHeader');
+            const tableBody = document.getElementById('tableBody');
+            const addTotalBtn = document.getElementById('addTotalBtn');
+            const themeToggle = document.getElementById('themeToggle');
+            const resultsContainer = document.getElementById('resultsContainer');
+
+            // Theme Toggle
+            themeToggle.addEventListener('click', function() {
+                document.body.setAttribute('data-theme', 
+                    document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+                
+                const icon = themeToggle.querySelector('i');
+                if (document.body.getAttribute('data-theme') === 'dark') {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            });
+
+            // Mode Toggle
+            modeToggle.addEventListener('change', function() {
+                updateTableHeader();
+            });
+
+            function updateTableHeader() {
+                if (modeToggle.checked) {
+                    // Advanced Mode
+                    tableHeader.innerHTML = `
+                        <th>📝 Words</th>
+                        <th>🔤 Characters</th>
+                        <th>🗣 Sentences</th>
+                        <th>📑 Paragraphs</th>
+                        <th>📊 Reading Level</th>
+                        <th>⏱ Reading Time</th>
+                        <th>🎤 Speaking Time</th>
+                    `;
+                } else {
+                    // Basic Mode
+                    tableHeader.innerHTML = `
+                        <th>📝 Words</th>
+                        <th>🔤 Characters</th>
+                        <th>🗣 Sentences</th>
+                    `;
+                }
+            }
+
+            // Analyze Button
+            analyzeBtn.addEventListener('click', function() {
+                const text = textInput.value.trim();
+                
+                if (text === '') {
+                    alert('Please enter some text to analyze.');
+                    return;
+                }
+                
+                const results = analyzeText(text);
+                displayResults(results);
+            });
+
+            // Clear Button
+            clearBtn.addEventListener('click', function() {
+                textInput.value = '';
+                tableBody.innerHTML = '';
+                resultsTable.style.display = 'none';
+                addTotalBtn.style.display = 'none';
+            });
+
+            // Add Total Button
+            addTotalBtn.addEventListener('click', function() {
+                const rows = tableBody.querySelectorAll('tr');
+                let totalWords = 0;
+                let totalChars = 0;
+                
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    totalWords += parseInt(cells[0].textContent);
+                    totalChars += parseInt(cells[1].textContent);
+                });
+                
+                const totalRow = document.createElement('tr');
+                totalRow.style.fontWeight = 'bold';
+                totalRow.style.backgroundColor = 'rgba(76, 175, 80, 0.1)';
+                
+                if (modeToggle.checked) {
+                    totalRow.innerHTML = `
+                        <td>${totalWords}</td>
+                        <td>${totalChars}</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    `;
+                } else {
+                    totalRow.innerHTML = `
+                        <td>${totalWords}</td>
+                        <td>${totalChars}</td>
+                        <td>-</td>
+                    `;
+                }
+                
+                tableBody.appendChild(totalRow);
+                addTotalBtn.style.display = 'none';
+            });
+
+            // Text Analysis Functions
+            function analyzeText(text) {
+                // Word count
+                const words = text.match(/\b[\w'-]+\b/g) || [];
+                const wordCount = words.length;
+                
+                // Character count (with and without spaces)
+                const charCount = text.length;
+                const charCountNoSpaces = text.replace(/\s+/g, '').length;
+                
+                // Sentence count
+                const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+                const sentenceCount = sentences.length;
+                
+                // Paragraph count
+                const paragraphs = text.split(/\n+/).filter(p => p.trim().length > 0);
+                const paragraphCount = paragraphs.length;
+                
+                // Reading level (Flesch-Kincaid Grade Level)
+                const syllables = countSyllables(text);
+                const sentencesForLevel = sentenceCount || 1; // Avoid division by zero
+                const wordsForLevel = wordCount || 1;
+                
+                const readingLevel = (
+                    0.39 * (wordCount / sentencesForLevel) + 
+                    11.8 * (syllables / wordsForLevel) - 
+                    15.59
+                ).toFixed(1);
+                
+                // Reading time (average 200 words per minute)
+                const readingTimeMinutes = Math.ceil(wordCount / 200);
+                
+                // Speaking time (average 150 words per minute)
+                const speakingTimeMinutes = Math.ceil(wordCount / 150);
+                
+                return {
+                    wordCount,
+                    charCount,
+                    charCountNoSpaces,
+                    sentenceCount,
+                    paragraphCount,
+                    readingLevel,
+                    readingTimeMinutes,
+                    speakingTimeMinutes
+                };
+            }
+            
+            function countSyllables(text) {
+                // Simple syllable counting (approximation)
+                const words = text.toLowerCase().match(/\b[\w'-]+\b/g) || [];
+                let syllableCount = 0;
+                
+                words.forEach(word => {
+                    // Basic syllable counting rules
+                    let count = 0;
+                    
+                    // Count vowel groups
+                    const vowelGroups = word.match(/[aeiouy]+/g);
+                    if (vowelGroups) count = vowelGroups.length;
+                    
+                    // Adjust for silent e
+                    if (word.endsWith('e') && !word.endsWith('le') && count > 1) count--;
+                    
+                    // At least one syllable per word
+                    syllableCount += Math.max(count, 1);
+                });
+                
+                return syllableCount;
+            }
+            
+            function displayResults(results) {
+                tableBody.innerHTML = '';
+                
+                const row = document.createElement('tr');
+                
+                if (modeToggle.checked) {
+                    // Advanced Mode
+                    row.innerHTML = `
+                        <td>${results.wordCount}</td>
+                        <td>${results.charCount}</td>
+                        <td>${results.sentenceCount}</td>
+                        <td>${results.paragraphCount}</td>
+                        <td>Grade ${results.readingLevel}</td>
+                        <td>${results.readingTimeMinutes} min</td>
+                        <td>${results.speakingTimeMinutes} min</td>
+                    `;
+                } else {
+                    // Basic Mode
+                    row.innerHTML = `
+                        <td>${results.wordCount}</td>
+                        <td>${results.charCount}</td>
+                        <td>${results.sentenceCount}</td>
+                    `;
+                }
+                
+                tableBody.appendChild(row);
+                resultsTable.style.display = 'table';
+                addTotalBtn.style.display = 'block';
+                
+                // Scroll to results
+                resultsContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+</html>
